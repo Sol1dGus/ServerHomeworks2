@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/src/main/java/org/example/attendance/repository/AttendanceJpaSpecificationRepositoryMarker.txt">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/src/main/java/org/example/attendance/repository/AttendanceJpaSpecificationRepositoryMarker.txt" />
+              <option name="updatedContent" value="This file is intentionally left blank and will be removed. (Workspace tool placeholder)&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

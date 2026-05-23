@@ -1,0 +1,33 @@
+server:
+  port: ${APP_PORT:8080}
+
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/attendance}
+    username: ${DB_USERNAME:attendance}
+    password: ${DB_PASSWORD:attendance}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+logging:
+  level:
+    root: ${LOG_LEVEL_ROOT:INFO}
+    http.access: ${LOG_LEVEL_HTTP:INFO}
+    org.hibernate.SQL: warn
