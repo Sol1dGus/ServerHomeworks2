@@ -33,7 +33,6 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } finally {
             long ms = System.currentTimeMillis() - start;
-            // Низкоуровневое логирование здесь не делаем, чтобы не дублировать — оно будет в интерцепторе
             MDC.remove("requestId");
         }
     }

@@ -11,11 +11,15 @@ import org.example.attendance.repository.SubjectRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 @Service
 @Transactional
 public class SubjectService {
+    private static final Logger log = LoggerFactory.getLogger(SubjectService.class);
     private final SubjectRepository subjectRepository;
     private final LessonRepository lessonRepository;
 
@@ -37,14 +41,19 @@ public class SubjectService {
 
     public SubjectResponse create(SubjectCreateRequest req) {
         String trimmed = req.getName() == null ? null : req.getName().trim();
+        log.info("Создание дисциплины: name='{}'", trimmed);
+
         if (subjectRepository.existsByNameIgnoreCase(trimmed)) {
             throw new ConflictException("Дисциплина с названием '" + trimmed + "' уже существует");
         }
         Subject saved = subjectRepository.save(new Subject(null, trimmed));
+        log.info("Дисциплина создана: subjectId={}, name='{}'", saved.getId(), saved.getName());
         return toResponse(saved);
     }
 
     public SubjectResponse update(Long id, SubjectUpdateRequest req) {
+        log.info("Обновление дисциплины: subjectId={}, newName='{}'", id, req.getName());
+
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Дисциплина с id=" + id + " не найдена"));
 
@@ -54,10 +63,13 @@ public class SubjectService {
         }
 
         subject.setName(newName);
+        log.info("Дисциплина обновлена: subjectId={}, name='{}'", subject.getId(), subject.getName());
         return toResponse(subject);
     }
 
     public void delete(Long id) {
+        log.info("Удаление дисциплины: subjectId={}", id);
+
         Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Дисциплина с id=" + id + " не найдена"));
 
@@ -67,10 +79,10 @@ public class SubjectService {
         }
 
         subjectRepository.delete(subject);
+        log.info("Дисциплина удалена: subjectId={}", id);
     }
 
     private SubjectResponse toResponse(Subject subject) {
         return new SubjectResponse(subject.getId(), subject.getName());
     }
 }
-

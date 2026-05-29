@@ -12,11 +12,16 @@ import org.example.attendance.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 @Service
 @Transactional
 public class StudentGroupService {
+    private static final Logger log = LoggerFactory.getLogger(StudentGroupService.class);
+
     private final StudentGroupRepository groupRepository;
     private final StudentRepository studentRepository;
     private final LessonRepository lessonRepository;
@@ -44,14 +49,19 @@ public class StudentGroupService {
 
     public StudentGroupResponse create(StudentGroupCreateRequest req) {
         String trimmed = req.getName() == null ? null : req.getName().trim();
+        log.info("Создание группы: name='{}'", trimmed);
+
         if (groupRepository.existsByNameIgnoreCase(trimmed)) {
             throw new ConflictException("Группа с названием '" + trimmed + "' уже существует");
         }
         StudentGroup saved = groupRepository.save(new StudentGroup(null, trimmed));
+        log.info("Группа создана: groupId={}, name='{}'", saved.getId(), saved.getName());
         return toResponse(saved);
     }
 
     public StudentGroupResponse update(Long id, StudentGroupUpdateRequest req) {
+        log.info("Обновление группы: groupId={}, newName='{}'", id, req.getName());
+
         StudentGroup group = groupRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Группа с id=" + id + " не найдена"));
 
@@ -61,10 +71,13 @@ public class StudentGroupService {
         }
 
         group.setName(newName);
+        log.info("Группа обновлена: groupId={}, name='{}'", group.getId(), group.getName());
         return toResponse(group);
     }
 
     public void delete(Long id) {
+        log.info("Удаление группы: groupId={}", id);
+
         StudentGroup group = groupRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Группа с id=" + id + " не найдена"));
 
@@ -77,6 +90,7 @@ public class StudentGroupService {
         }
 
         groupRepository.delete(group);
+        log.info("Группа удалена: groupId={}", id);
     }
 
     private StudentGroupResponse toResponse(StudentGroup group) {

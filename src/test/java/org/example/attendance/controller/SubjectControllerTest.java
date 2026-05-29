@@ -1,4 +1,4 @@
-package org.example.attendance;
+package org.example.attendance.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.AttendanceApplication;

@@ -6,6 +6,8 @@ import org.example.attendance.exception.ConflictException;
 import org.example.attendance.exception.NotFoundException;
 import org.example.attendance.model.*;
 import org.example.attendance.repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class LessonService {
+    private static final Logger log = LoggerFactory.getLogger(LessonService.class);
+
     private final LessonRepository lessonRepository;
     private final TeacherRepository teacherRepository;
     private final SubjectRepository subjectRepository;
@@ -93,19 +97,26 @@ public class LessonService {
     }
 
     public LessonDetailsResponse create(LessonCreateRequest req) {
+        log.info("Создание занятия: teacherId={}, subjectId={}, groupId={}, date={}, pairNumber={}",
+                req.getTeacherId(), req.getSubjectId(), req.getGroupId(), req.getDate(), req.getPairNumber());
+
         Lesson lesson = new Lesson();
         applyUpdate(lesson, req.getTeacherId(), req.getSubjectId(), req.getGroupId(), req.getDate(), req.getPairNumber());
         Lesson saved;
         try {
             saved = lessonRepository.saveAndFlush(lesson);
         } catch (Exception ex) {
-            // на случай нарушения уникального ограничения по слоту
             throw new ConflictException("Занятие в этот слот уже существует (преподаватель/группа/дата/пара)");
         }
+
+        log.info("Занятие создано: lessonId={}", saved.getId());
         return getByIdWithAttendance(saved.getId());
     }
 
     public LessonDetailsResponse update(Long id, LessonUpdateRequest req) {
+        log.info("Обновление занятия lessonId={}: teacherId={}, subjectId={}, groupId={}, date={}, pairNumber={}",
+                id, req.getTeacherId(), req.getSubjectId(), req.getGroupId(), req.getDate(), req.getPairNumber());
+
         Lesson lesson = lessonRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Занятие с id=" + id + " не найдено"));
 
@@ -116,21 +127,28 @@ public class LessonService {
             throw new ConflictException("Занятие в этот слот уже существует (преподаватель/группа/дата/пара)");
         }
 
-        // если поменяли группу — attendance больше невалидна, очищаем
         attendanceRepository.deleteAllByLessonId(id);
+        log.info("Занятие обновлено, attendance очищен: lessonId={}", id);
 
         return getByIdWithAttendance(id);
     }
 
     public void delete(Long id) {
+        log.info("Удаление занятия lessonId={}", id);
+
         Lesson lesson = lessonRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Занятие с id=" + id + " не найдено"));
 
         attendanceRepository.deleteAllByLessonId(id);
         lessonRepository.delete(lesson);
+
+        log.info("Занятие удалено: lessonId={}", id);
     }
 
     public LessonDetailsResponse updateAttendance(Long lessonId, LessonAttendanceUpdateRequest req) {
+        int presentCount = req.getPresentStudentIds() == null ? 0 : req.getPresentStudentIds().size();
+        log.info("Обновление посещаемости: lessonId={}, presentStudentIdsCount={}", lessonId, presentCount);
+
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new NotFoundException("Занятие с id=" + lessonId + " не найдено"));
 
@@ -159,6 +177,7 @@ public class LessonService {
             }
         }
         attendanceRepository.saveAll(toSave);
+        log.info("Посещаемость обновлена: lessonId={}, presentSaved={}", lessonId, toSave.size());
 
         return getByIdWithAttendance(lessonId);
     }

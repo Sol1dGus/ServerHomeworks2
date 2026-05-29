@@ -13,11 +13,16 @@ import org.example.attendance.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 @Service
 @Transactional
 public class StudentService {
+    private static final Logger log = LoggerFactory.getLogger(StudentService.class);
+
     private final StudentRepository studentRepository;
     private final StudentGroupRepository groupRepository;
     private final AttendanceRepository attendanceRepository;
@@ -48,6 +53,7 @@ public class StudentService {
 
     public StudentResponse create(StudentCreateRequest req) {
         String trimmedName = req.getFullName() == null ? null : req.getFullName().trim();
+        log.info("Создание студента: fullName='{}', groupId={}", trimmedName, req.getGroupId());
 
         StudentGroup group = groupRepository.findById(req.getGroupId())
                 .orElseThrow(() -> new NotFoundException("Группа с id=" + req.getGroupId() + " не найдена"));
@@ -57,10 +63,13 @@ public class StudentService {
         }
 
         Student saved = studentRepository.save(new Student(null, trimmedName, group));
+        log.info("Студент создан: studentId={}, fullName='{}'", saved.getId(), saved.getFullName());
         return toResponse(saved);
     }
 
     public StudentResponse update(Long id, StudentUpdateRequest req) {
+        log.info("Обновление студента: studentId={}, newFullName='{}', newGroupId={}", id, req.getFullName(), req.getGroupId());
+
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Студент с id=" + id + " не найден"));
 
@@ -74,10 +83,13 @@ public class StudentService {
 
         student.setFullName(newName);
         student.setGroup(group);
+        log.info("Студент обновлён: studentId={}, fullName='{}', groupId={}", student.getId(), student.getFullName(), student.getGroup().getId());
         return toResponse(student);
     }
 
     public void delete(Long id) {
+        log.info("Удаление студента: studentId={}", id);
+
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Студент с id=" + id + " не найден"));
 
@@ -87,10 +99,10 @@ public class StudentService {
         }
 
         studentRepository.delete(student);
+        log.info("Студент удалён: studentId={}", id);
     }
 
     private StudentResponse toResponse(Student student) {
-        // group ленивый, но внутри транзакции ok
         return new StudentResponse(
                 student.getId(),
                 student.getFullName(),

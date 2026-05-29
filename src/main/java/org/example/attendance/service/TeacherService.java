@@ -13,9 +13,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 @Transactional
 public class TeacherService {
+    private static final Logger log = LoggerFactory.getLogger(TeacherService.class);
+
     private final TeacherRepository teacherRepository;
     private final LessonRepository lessonRepository;
 
@@ -37,14 +42,19 @@ public class TeacherService {
 
     public TeacherResponse create(TeacherCreateRequest req) {
         String trimmed = req.getFullName() == null ? null : req.getFullName().trim();
+        log.info("Создание преподавателя: fullName='{}'", trimmed);
+
         if (teacherRepository.existsByFullNameIgnoreCase(trimmed)) {
             throw new ConflictException("Преподаватель с ФИО '" + trimmed + "' уже существует");
         }
         Teacher saved = teacherRepository.save(new Teacher(null, trimmed));
+        log.info("Преподаватель создан: teacherId={}, fullName='{}'", saved.getId(), saved.getFullName());
         return toResponse(saved);
     }
 
     public TeacherResponse update(Long id, TeacherUpdateRequest req) {
+        log.info("Обновление преподавателя: teacherId={}, newFullName='{}'", id, req.getFullName());
+
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Преподаватель с id=" + id + " не найден"));
 
@@ -54,10 +64,13 @@ public class TeacherService {
         }
 
         teacher.setFullName(newName);
+        log.info("Преподаватель обновлён: teacherId={}, fullName='{}'", teacher.getId(), teacher.getFullName());
         return toResponse(teacher);
     }
 
     public void delete(Long id) {
+        log.info("Удаление преподавателя: teacherId={}", id);
+
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Преподаватель с id=" + id + " не найден"));
 
@@ -67,10 +80,10 @@ public class TeacherService {
         }
 
         teacherRepository.delete(teacher);
+        log.info("Преподаватель удалён: teacherId={}", id);
     }
 
     private TeacherResponse toResponse(Teacher teacher) {
         return new TeacherResponse(teacher.getId(), teacher.getFullName());
     }
 }
-
