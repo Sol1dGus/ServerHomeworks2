@@ -1,0 +1,470 @@
+{
+  "info": {
+    "name": "Attendance API",
+    "_postman_id": "2a60c4c8-2ab4-4b87-8c2d-87bb2e0b9b8e",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "requestId", "value": "" },
+    { "key": "groupId", "value": "" },
+    { "key": "studentId", "value": "" },
+    { "key": "teacherId", "value": "" },
+    { "key": "subjectId", "value": "" },
+    { "key": "lessonId", "value": "" }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.variables.set('requestId', pm.variables.replaceIn('{{$guid}}'));"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// базовая проверка стандарта ответа",
+          "if (pm.response.code !== 204) {",
+          "  pm.test('success=true в ответе', function () {",
+          "    const json = pm.response.json();",
+          "    pm.expect(json).to.have.property('success');",
+          "  });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Groups",
+      "item": [
+        {
+          "name": "Get all groups",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/groups", "host": ["{{baseUrl}}"], "path": ["api", "groups"] }
+          }
+        },
+        {
+          "name": "Get group by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/groups/{{groupId}}", "host": ["{{baseUrl}}"], "path": ["api", "groups", "{{groupId}}"] }
+          }
+        },
+        {
+          "name": "Create group",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"IU-7A\"\r\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/groups", "host": ["{{baseUrl}}"], "path": ["api", "groups"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json && json.data && json.data.id) pm.collectionVariables.set('groupId', String(json.data.id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update group",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"IU-7A (updated)\"\r\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/groups/{{groupId}}", "host": ["{{baseUrl}}"], "path": ["api", "groups", "{{groupId}}"] }
+          }
+        },
+        {
+          "name": "Delete group",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/groups/{{groupId}}", "host": ["{{baseUrl}}"], "path": ["api", "groups", "{{groupId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        {
+          "name": "Get students by groupId",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/students?groupId={{groupId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"],
+              "query": [
+                { "key": "groupId", "value": "{{groupId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get student by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["api", "students", "{{studentId}}"] }
+          }
+        },
+        {
+          "name": "Create student",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Иванов Иван Иванович\",\r\n  \"groupId\": {{groupId}}\r\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api", "students"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json && json.data && json.data.id) pm.collectionVariables.set('studentId', String(json.data.id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update student",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Иванов Иван Иванович (updated)\",\r\n  \"groupId\": {{groupId}}\r\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["api", "students", "{{studentId}}"] }
+          }
+        },
+        {
+          "name": "Delete student",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["api", "students", "{{studentId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Teachers",
+      "item": [
+        {
+          "name": "Get teachers (paged)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get teacher by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/teachers/{{teacherId}}", "host": ["{{baseUrl}}"], "path": ["api", "teachers", "{{teacherId}}"] }
+          }
+        },
+        {
+          "name": "Create teacher",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\r\n  \"fullName\": \"Петров Петр Петрович\"\r\n}" },
+            "url": { "raw": "{{baseUrl}}/api/teachers", "host": ["{{baseUrl}}"], "path": ["api", "teachers"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json && json.data && json.data.id) pm.collectionVariables.set('teacherId', String(json.data.id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update teacher",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\r\n  \"fullName\": \"Петров Петр Петрович (updated)\"\r\n}" },
+            "url": { "raw": "{{baseUrl}}/api/teachers/{{teacherId}}", "host": ["{{baseUrl}}"], "path": ["api", "teachers", "{{teacherId}}"] }
+          }
+        },
+        {
+          "name": "Delete teacher",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/teachers/{{teacherId}}", "host": ["{{baseUrl}}"], "path": ["api", "teachers", "{{teacherId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subjects",
+      "item": [
+        {
+          "name": "Get all subjects",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/subjects", "host": ["{{baseUrl}}"], "path": ["api", "subjects"] }
+          }
+        },
+        {
+          "name": "Get subject by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/subjects/{{subjectId}}", "host": ["{{baseUrl}}"], "path": ["api", "subjects", "{{subjectId}}"] }
+          }
+        },
+        {
+          "name": "Create subject",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\r\n  \"name\": \"Математика\"\r\n}" },
+            "url": { "raw": "{{baseUrl}}/api/subjects", "host": ["{{baseUrl}}"], "path": ["api", "subjects"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json && json.data && json.data.id) pm.collectionVariables.set('subjectId', String(json.data.id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update subject",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\r\n  \"name\": \"Математика (updated)\"\r\n}" },
+            "url": { "raw": "{{baseUrl}}/api/subjects/{{subjectId}}", "host": ["{{baseUrl}}"], "path": ["api", "subjects", "{{subjectId}}"] }
+          }
+        },
+        {
+          "name": "Delete subject",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/subjects/{{subjectId}}", "host": ["{{baseUrl}}"], "path": ["api", "subjects", "{{subjectId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lessons",
+      "item": [
+        {
+          "name": "Get lesson by id (with attendance)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/lessons/{{lessonId}}", "host": ["{{baseUrl}}"], "path": ["api", "lessons", "{{lessonId}}"] }
+          }
+        },
+        {
+          "name": "Get lessons list (period + filters + paging)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lessons?from=2026-01-01&to=2026-12-31&groupId={{groupId}}&teacherId={{teacherId}}&page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lessons"],
+              "query": [
+                { "key": "from", "value": "2026-01-01" },
+                { "key": "to", "value": "2026-12-31" },
+                { "key": "groupId", "value": "{{groupId}}" },
+                { "key": "teacherId", "value": "{{teacherId}}" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create lesson",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"teacherId\": {{teacherId}},\r\n  \"subjectId\": {{subjectId}},\r\n  \"groupId\": {{groupId}},\r\n  \"date\": \"2026-05-30\",\r\n  \"pairNumber\": 1\r\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/lessons", "host": ["{{baseUrl}}"], "path": ["api", "lessons"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json && json.data && json.data.id) pm.collectionVariables.set('lessonId', String(json.data.id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update lesson",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"teacherId\": {{teacherId}},\r\n  \"subjectId\": {{subjectId}},\r\n  \"groupId\": {{groupId}},\r\n  \"date\": \"2026-05-30\",\r\n  \"pairNumber\": 2\r\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/lessons/{{lessonId}}", "host": ["{{baseUrl}}"], "path": ["api", "lessons", "{{lessonId}}"] }
+          }
+        },
+        {
+          "name": "Update lesson attendance",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"presentStudentIds\": [{{studentId}}]\r\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/lessons/{{lessonId}}/attendance", "host": ["{{baseUrl}}"], "path": ["api", "lessons", "{{lessonId}}", "attendance"] }
+          }
+        },
+        {
+          "name": "Delete lesson",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "X-Request-Id", "value": "{{requestId}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/lessons/{{lessonId}}", "host": ["{{baseUrl}}"], "path": ["api", "lessons", "{{lessonId}}"] }
+          }
+        }
+      ]
+    }
+  ]
+}
+

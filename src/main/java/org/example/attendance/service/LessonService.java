@@ -8,6 +8,7 @@ import org.example.attendance.model.*;
 import org.example.attendance.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -49,7 +50,6 @@ public class LessonService {
         Lesson lesson = lessonRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Занятие с id=" + id + " не найдено"));
 
-        // Достаём список студентов группы, чтобы вернуть attendance по всем (даже если записи ещё нет)
         List<Student> groupStudents = studentRepository.findAllByGroupIdOrderByFullNameAsc(lesson.getGroup().getId());
         Map<Long, Boolean> presentMap = attendanceRepository.findAllByLessonId(id).stream()
                 .collect(Collectors.toMap(a -> a.getStudent().getId(), Attendance::isPresent));
@@ -105,7 +105,7 @@ public class LessonService {
         Lesson saved;
         try {
             saved = lessonRepository.saveAndFlush(lesson);
-        } catch (Exception ex) {
+        } catch (DataIntegrityViolationException ex) {
             throw new ConflictException("Занятие в этот слот уже существует (преподаватель/группа/дата/пара)");
         }
 
@@ -123,7 +123,7 @@ public class LessonService {
         applyUpdate(lesson, req.getTeacherId(), req.getSubjectId(), req.getGroupId(), req.getDate(), req.getPairNumber());
         try {
             lessonRepository.saveAndFlush(lesson);
-        } catch (Exception ex) {
+        } catch (DataIntegrityViolationException ex) {
             throw new ConflictException("Занятие в этот слот уже существует (преподаватель/группа/дата/пара)");
         }
 
@@ -166,7 +166,6 @@ public class LessonService {
                     .toList());
         }
 
-        // проще полностью пересобрать attendance
         attendanceRepository.deleteAllByLessonId(lessonId);
 
         List<Attendance> toSave = new ArrayList<>();

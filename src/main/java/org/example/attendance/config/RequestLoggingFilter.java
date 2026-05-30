@@ -27,12 +27,9 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
 
         MDC.put("requestId", requestId);
         response.setHeader(REQUEST_ID_HEADER, requestId);
-
-        long start = System.currentTimeMillis();
         try {
             filterChain.doFilter(request, response);
         } finally {
-            long ms = System.currentTimeMillis() - start;
             MDC.remove("requestId");
         }
     }

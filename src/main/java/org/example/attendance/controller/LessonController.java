@@ -52,9 +52,8 @@ public class LessonController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ApiResponse<Void> delete(@PathVariable Long id) {
+    public void delete(@PathVariable Long id) {
         service.delete(id);
-        return ApiResponse.success(null);
     }
 
     @PutMapping("/{id}/attendance")
@@ -63,5 +62,3 @@ public class LessonController {
         return ApiResponse.success(service.updateAttendance(id, req));
     }
 }
-
-
