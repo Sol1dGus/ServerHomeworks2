@@ -4,6 +4,7 @@ import org.example.attendance.model.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
@@ -49,5 +50,21 @@ class AttendanceRepositoryTest {
         assertFalse(attendanceRepository.existsByLessonId(lesson.getId()));
         assertFalse(attendanceRepository.existsByStudent_Id(st1.getId()));
         assertEquals(0, attendanceRepository.findAllByLessonId(lesson.getId()).size());
+    }
+
+    @Test
+    void uniqueLessonStudentConstraint_rejectsDuplicateAttendance() {
+        StudentGroup g = groupRepository.save(new StudentGroup(null, "ИКБО-ATT-02"));
+        Teacher t = teacherRepository.save(new Teacher(null, "Преподаватель ATT"));
+        Subject s = subjectRepository.save(new Subject(null, "Предмет ATT"));
+
+        Student st1 = studentRepository.save(new Student(null, "Студент 1", g));
+        Lesson lesson = lessonRepository.save(new Lesson(null, t, s, g, LocalDate.of(2026, 5, 2), 1));
+
+        attendanceRepository.saveAndFlush(new Attendance(null, lesson, st1, true));
+
+        // (lesson_id, student_id) уникальны
+        assertThrows(DataIntegrityViolationException.class,
+                () -> attendanceRepository.saveAndFlush(new Attendance(null, lesson, st1, true)));
     }
 }
