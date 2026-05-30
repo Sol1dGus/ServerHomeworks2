@@ -73,7 +73,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"IU-7A\"\r\n}"
+              "raw": "{\r\n  \"name\": \"ММБ-301-О-02\"\r\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/groups", "host": ["{{baseUrl}}"], "path": ["api", "groups"] }
           },
@@ -102,7 +102,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"IU-7A (updated)\"\r\n}"
+              "raw": "{\r\n  \"name\": \"ММБ-301-О-02 (обновлено)\"\r\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/groups/{{groupId}}", "host": ["{{baseUrl}}"], "path": ["api", "groups", "{{groupId}}"] }
           }
@@ -159,7 +159,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"fullName\": \"Иванов Иван Иванович\",\r\n  \"groupId\": {{groupId}}\r\n}"
+              "raw": "{\r\n  \"fullName\": \"Исланкин Александр Евгеньевич\",\r\n  \"groupId\": {{groupId}}\r\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api", "students"] }
           },
@@ -188,7 +188,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"fullName\": \"Иванов Иван Иванович (updated)\",\r\n  \"groupId\": {{groupId}}\r\n}"
+              "raw": "{\r\n  \"fullName\": \"Исланкин Александр Евгеньевич (обновлено)\",\r\n  \"groupId\": {{groupId}}\r\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["api", "students", "{{studentId}}"] }
           }
@@ -244,7 +244,7 @@
               { "key": "Content-Type", "value": "application/json" },
               { "key": "X-Request-Id", "value": "{{requestId}}" }
             ],
-            "body": { "mode": "raw", "raw": "{\r\n  \"fullName\": \"Петров Петр Петрович\"\r\n}" },
+            "body": { "mode": "raw", "raw": "{\r\n  \"fullName\": \"Ашаев Игорь Викторович\"\r\n}" },
             "url": { "raw": "{{baseUrl}}/api/teachers", "host": ["{{baseUrl}}"], "path": ["api", "teachers"] }
           },
           "event": [
@@ -270,7 +270,7 @@
               { "key": "Content-Type", "value": "application/json" },
               { "key": "X-Request-Id", "value": "{{requestId}}" }
             ],
-            "body": { "mode": "raw", "raw": "{\r\n  \"fullName\": \"Петров Петр Петрович (updated)\"\r\n}" },
+            "body": { "mode": "raw", "raw": "{\r\n  \"fullName\": \"Ашаев Игорь Викторович (обновлено)\"\r\n}" },
             "url": { "raw": "{{baseUrl}}/api/teachers/{{teacherId}}", "host": ["{{baseUrl}}"], "path": ["api", "teachers", "{{teacherId}}"] }
           }
         },
@@ -317,7 +317,7 @@
               { "key": "Content-Type", "value": "application/json" },
               { "key": "X-Request-Id", "value": "{{requestId}}" }
             ],
-            "body": { "mode": "raw", "raw": "{\r\n  \"name\": \"Математика\"\r\n}" },
+            "body": { "mode": "raw", "raw": "{\r\n  \"name\": \"Математический Анализ\"\r\n}" },
             "url": { "raw": "{{baseUrl}}/api/subjects", "host": ["{{baseUrl}}"], "path": ["api", "subjects"] }
           },
           "event": [
@@ -343,7 +343,7 @@
               { "key": "Content-Type", "value": "application/json" },
               { "key": "X-Request-Id", "value": "{{requestId}}" }
             ],
-            "body": { "mode": "raw", "raw": "{\r\n  \"name\": \"Математика (updated)\"\r\n}" },
+            "body": { "mode": "raw", "raw": "{\r\n  \"name\": \"Математический Анализ (обновлено)\"\r\n}" },
             "url": { "raw": "{{baseUrl}}/api/subjects/{{subjectId}}", "host": ["{{baseUrl}}"], "path": ["api", "subjects", "{{subjectId}}"] }
           }
         },
