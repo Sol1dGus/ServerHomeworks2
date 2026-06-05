@@ -63,7 +63,12 @@ class LessonControllerTest extends AuthenticatedControllerTestBase {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.attendance").isArray())
-                .andExpect(jsonPath("$.data.attendance[0].studentId").isNumber());
+                // Проверяем студента s1 ("Иванов") - он должен быть present=true
+                .andExpect(jsonPath("$.data.attendance[0].studentId").value(s1))
+                .andExpect(jsonPath("$.data.attendance[0].present").value(true))
+                // Проверяем студента s2 ("Сидоров") - он должен быть present=false
+                .andExpect(jsonPath("$.data.attendance[1].studentId").value(s2))
+                .andExpect(jsonPath("$.data.attendance[1].present").value(false));
     }
 
     private long createGroup(String name, String token) throws Exception {
