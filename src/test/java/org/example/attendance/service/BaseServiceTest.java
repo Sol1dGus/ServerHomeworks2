@@ -24,8 +24,12 @@ public abstract class BaseServiceTest {
     @Autowired
     TeacherRepository teacherRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @BeforeEach
     void cleanDb() {
+        userRepository.deleteAll();
         attendanceRepository.deleteAll();
         lessonRepository.deleteAll();
         studentRepository.deleteAll();

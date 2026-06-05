@@ -7,6 +7,7 @@ import org.example.attendance.dto.group.StudentGroupResponse;
 import org.example.attendance.dto.group.StudentGroupUpdateRequest;
 import org.example.attendance.service.StudentGroupService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,17 +33,20 @@ public class StudentGroupController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<StudentGroupResponse> create(@Valid @RequestBody StudentGroupCreateRequest req) {
         return ApiResponse.success(service.create(req));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<StudentGroupResponse> update(@PathVariable Long id, @Valid @RequestBody StudentGroupUpdateRequest req) {
         return ApiResponse.success(service.update(id, req));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }

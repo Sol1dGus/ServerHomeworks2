@@ -16,19 +16,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = AttendanceApplication.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class StudentControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
+class StudentControllerTest extends AuthenticatedControllerTestBase {
 
     @Test
     void createStudent_withMissingGroup_returnsNotFoundStandardError() throws Exception {
+        String token = registerAdminAndGetToken();
+
         var body = objectMapper.writeValueAsString(new CreateStudentRequest("Иванов Иван Иванович", 9999L));
 
         mockMvc.perform(post("/api/students")
+                        .header("Authorization", bearer(token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isNotFound())

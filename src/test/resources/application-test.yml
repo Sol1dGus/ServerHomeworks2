@@ -11,6 +11,12 @@ spring:
   flyway:
     enabled: true
 
+jwt:
+  access-secret: dGVzdF9hY2Nlc3Nfc2VjcmV0X2tleV9mb3JfdW5pdF90ZXN0c18xMjM0NTY3ODkwYWJjZGVm
+  refresh-secret: dGVzdF9yZWZyZXNoX3NlY3JldF9rZXlfZm9yX3VuaXRfdGVzdHNfMTIzNDU2Nzg5MGFiY2RlZg==
+  access-expiration-ms: 900000
+  refresh-expiration-ms: 604800000
+
 logging:
   level:
     org.hibernate.SQL: warn

@@ -17,19 +17,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = AttendanceApplication.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class SubjectControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
+class SubjectControllerTest extends AuthenticatedControllerTestBase {
 
     @Test
     void createSubject_andGetAll_returnsStandardResponse() throws Exception {
+        String token = registerAdminAndGetToken();
+
         var body = objectMapper.writeValueAsString(new CreateSubjectRequest("Математика"));
 
         mockMvc.perform(post("/api/subjects")
+                        .header("Authorization", bearer(token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
@@ -37,7 +34,8 @@ class SubjectControllerTest {
                 .andExpect(jsonPath("$.data.id").isNumber())
                 .andExpect(jsonPath("$.data.name").value("Математика"));
 
-        mockMvc.perform(get("/api/subjects"))
+        mockMvc.perform(get("/api/subjects")
+                        .header("Authorization", bearer(token)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray());
