@@ -8,12 +8,15 @@ import org.example.attendance.dto.group.StudentGroupUpdateRequest;
 import org.example.attendance.service.StudentGroupService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/groups")
+@Tag(name = "Groups", description = "Управление группами студентов")
 public class StudentGroupController {
     private final StudentGroupService service;
 

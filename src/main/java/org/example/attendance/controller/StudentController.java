@@ -10,12 +10,15 @@ import org.example.attendance.security.SecurityUtils;
 import org.example.attendance.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/students")
+@Tag(name = "Students", description = "Управление студентами")
 public class StudentController {
     private final StudentService service;
 

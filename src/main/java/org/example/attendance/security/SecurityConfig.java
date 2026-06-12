@@ -41,6 +41,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/actuator/health/**").permitAll()
+                .requestMatchers("/api-docs/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/webjars/**").permitAll()
 
                 .requestMatchers(HttpMethod.GET, "/api/groups/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/teachers/**").hasAnyRole("STUDENT", "TEACHER", "ADMIN")

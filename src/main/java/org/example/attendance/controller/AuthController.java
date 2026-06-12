@@ -5,10 +5,13 @@ import org.example.attendance.dto.ApiResponse;
 import org.example.attendance.dto.auth.*;
 import org.example.attendance.service.AuthService;
 import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Auth", description = "Аутентификация и управление токенами")
 public class AuthController {
 
     private final AuthService authService;

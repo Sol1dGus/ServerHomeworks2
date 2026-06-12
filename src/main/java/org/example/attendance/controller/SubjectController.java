@@ -8,12 +8,15 @@ import org.example.attendance.dto.subject.SubjectUpdateRequest;
 import org.example.attendance.service.SubjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/subjects")
+@Tag(name = "Subjects", description = "Управление дисциплинами")
 public class SubjectController {
     private final SubjectService service;
 
